@@ -1,9 +1,13 @@
 import cv2
-import numpy as np;
+import numpy as np
+import time
 class StarDetector:
     @staticmethod
     def getStarBlobs(im):
         im = cv2.erode(im,np.ones((2,2)))
+
+        height, width = im.shape[:2]
+        area = height * width
         # Setup SimpleBlobDetector parameters.
         params = cv2.SimpleBlobDetector_Params()
          
@@ -13,8 +17,10 @@ class StarDetector:
          
         # Filter by Area.
         params.filterByArea = True
-        params.minArea = 49
-        params.maxArea = 1024
+        #10000
+        #500
+        params.minArea = area/6596.4
+        params.maxArea = area/1
          
         # Filter by Circularity
         params.filterByCircularity = True
@@ -24,6 +30,7 @@ class StarDetector:
         # Filter by Convexity
         params.filterByConvexity = False
         params.minConvexity = 0.1
+        params.maxConvexity = 1
          
         # Filter by Inertia
         params.filterByInertia = True
@@ -58,19 +65,34 @@ class StarDetector:
         im_with_keypoints = cv2.drawKeypoints(image, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
         height, width = im_with_keypoints.shape[:2]
         cv2.imshow(name,cv2.resize(im_with_keypoints,(int(factor*width), int(factor*height)), interpolation = cv2.INTER_CUBIC))
-        print(keypoints)
+        print(len(keypoints))
     @staticmethod
     def getKeypoints(name):
         im = 255 - cv2.imread(name, cv2.IMREAD_GRAYSCALE)
-        cv2.imshow("test "+name,im)
+        #cv2.imshow("test "+name,im)
         msk = cv2.inRange(im,0,196)
         im = 255 - cv2.bitwise_and(255-im,255-im,mask=msk)
         keypoints = StarDetector.blobSieve(StarDetector.getStarBlobs(im))
         StarDetector.displayBlobs(im,keypoints,1,name)
-# Read image
 
-StarDetector.getKeypoints("orion.jpg")
-StarDetector.getKeypoints("big_dipper.jpg")
+cv2.namedWindow('image')
 
-cv2.waitKey(0)
+# create trackbars for color change
+cv2.createTrackbar('minThr','image',0,255,nothing)
+cv2.createTrackbar('maxThr','image',0,255,nothing)
+cv2.createTrackbar('minAre','image',0,255,nothing)
+cv2.createTrackbar('maxAre','image',0,255,nothing)
+cv2.createTrackbar('minCir','image',0,255,nothing)
+cv2.createTrackbar('maxCir','image',0,255,nothing)
+cv2.createTrackbar('minCon','image',0,255,nothing)
+cv2.createTrackbar('maxCon','image',0,255,nothing)
+cv2.createTrackbar('minIne','image',0,255,nothing)
+cv2.createTrackbar('minMsk','image',0,255,nothing)
+cv2.createTrackbar('maxMsk','image',0,255,nothing)
+
+while True:
+    StarDetector.getKeypoints("orion.jpg")
+    StarDetector.getKeypoints("big_dipper.jpg")
+    StarDetector.getKeypoints("leo.jpg")
+    cv2.waitKey(0)
 quit()
