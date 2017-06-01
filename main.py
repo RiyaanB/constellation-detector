@@ -1,6 +1,10 @@
 import cv2
 import numpy as np
 import time
+
+def nothing(x):
+    pass
+
 class StarDetector:
     @staticmethod
     def getStarBlobs(im):
@@ -13,28 +17,28 @@ class StarDetector:
          
         # Change thresholds
         params.minThreshold = 4;
-        params.maxThreshold = 196;
+        params.maxThreshold = 255;
          
         # Filter by Area.
         params.filterByArea = True
         #10000
         #500
-        params.minArea = area/6596.4
-        params.maxArea = area/1
+        params.minArea = area/6596
+        params.maxArea = area/711
          
         # Filter by Circularity
         params.filterByCircularity = True
-        params.minCircularity = 0.1
-        params.maxCircularity = 1
+        params.minCircularity = 0
+        params.maxCircularity = 255
          
         # Filter by Convexity
         params.filterByConvexity = False
-        params.minConvexity = 0.1
-        params.maxConvexity = 1
+        params.minConvexity = 0
+        params.maxConvexity = 255
          
         # Filter by Inertia
         params.filterByInertia = True
-        params.minInertiaRatio = 0.3
+        params.minInertiaRatio = 0
 
         ver = (cv2.__version__).split('.')
         if int(ver[0]) < 3 :
@@ -70,10 +74,11 @@ class StarDetector:
     def getKeypoints(name):
         im = 255 - cv2.imread(name, cv2.IMREAD_GRAYSCALE)
         #cv2.imshow("test "+name,im)
-        msk = cv2.inRange(im,0,196)
+        msk = cv2.inRange(im,0,165)
         im = 255 - cv2.bitwise_and(255-im,255-im,mask=msk)
         keypoints = StarDetector.blobSieve(StarDetector.getStarBlobs(im))
         StarDetector.displayBlobs(im,keypoints,1,name)
+        
 
 
 while True:

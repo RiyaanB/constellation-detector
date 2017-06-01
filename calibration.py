@@ -1,6 +1,10 @@
 import cv2
 import numpy as np
 import time
+
+def nothing(x):
+    pass
+
 class StarDetector:
     @staticmethod
     def getStarBlobs(im):
@@ -12,29 +16,30 @@ class StarDetector:
         params = cv2.SimpleBlobDetector_Params()
          
         # Change thresholds
-        params.minThreshold = 4;
-        params.maxThreshold = 196;
+        params.minThreshold = cv2.getTrackbarPos('minThr','image')
+        params.maxThreshold = cv2.getTrackbarPos('maxThr','image')
          
         # Filter by Area.
         params.filterByArea = True
         #10000
         #500
-        params.minArea = area/6596.4
-        params.maxArea = area/1
+        
+        params.minArea = area/(cv2.getTrackbarPos('minAre','image') + 1)
+        params.maxArea = area/(cv2.getTrackbarPos('maxAre','image') + 1)
          
         # Filter by Circularity
         params.filterByCircularity = True
-        params.minCircularity = 0.1
-        params.maxCircularity = 1
+        params.minCircularity = cv2.getTrackbarPos('minCir','image')
+        params.maxCircularity = cv2.getTrackbarPos('maxCir','image')
          
         # Filter by Convexity
         params.filterByConvexity = False
-        params.minConvexity = 0.1
-        params.maxConvexity = 1
+        params.minConvexity = cv2.getTrackbarPos('minCon','image')
+        params.maxConvexity = cv2.getTrackbarPos('maxCon','image')
          
         # Filter by Inertia
         params.filterByInertia = True
-        params.minInertiaRatio = 0.3
+        params.minInertiaRatio = cv2.getTrackbarPos('minIne','image')
 
         ver = (cv2.__version__).split('.')
         if int(ver[0]) < 3 :
@@ -43,11 +48,12 @@ class StarDetector:
             detector = cv2.SimpleBlobDetector_create(params)
          
         keypoints = detector.detect(im)
+        print("detected")
         return keypoints#,im
     @staticmethod
     def printKeypoints(keypoints):
         for keypoint in keypoints:
-            print(keypoint.size)
+            pass#print(keypoint.size)
     @staticmethod
     def blobSieve(keypoints):
         keypoints = sorted(keypoints,key=lambda s:s.size)
@@ -70,7 +76,7 @@ class StarDetector:
     def getKeypoints(name):
         im = 255 - cv2.imread(name, cv2.IMREAD_GRAYSCALE)
         #cv2.imshow("test "+name,im)
-        msk = cv2.inRange(im,0,196)
+        msk = cv2.inRange(im,cv2.getTrackbarPos('minMsk','image'),cv2.getTrackbarPos('maxMsk','image'))
         im = 255 - cv2.bitwise_and(255-im,255-im,mask=msk)
         keypoints = StarDetector.blobSieve(StarDetector.getStarBlobs(im))
         StarDetector.displayBlobs(im,keypoints,1,name)
@@ -80,8 +86,8 @@ cv2.namedWindow('image')
 # create trackbars for color change
 cv2.createTrackbar('minThr','image',0,255,nothing)
 cv2.createTrackbar('maxThr','image',0,255,nothing)
-cv2.createTrackbar('minAre','image',0,255,nothing)
-cv2.createTrackbar('maxAre','image',0,255,nothing)
+cv2.createTrackbar('minAre','image',0,6595,nothing)
+cv2.createTrackbar('maxAre','image',0,6595,nothing)
 cv2.createTrackbar('minCir','image',0,255,nothing)
 cv2.createTrackbar('maxCir','image',0,255,nothing)
 cv2.createTrackbar('minCon','image',0,255,nothing)
@@ -94,5 +100,5 @@ while True:
     StarDetector.getKeypoints("orion.jpg")
     StarDetector.getKeypoints("big_dipper.jpg")
     StarDetector.getKeypoints("leo.jpg")
-    cv2.waitKey(0)
+    cv2.waitKey(1)
 quit()
