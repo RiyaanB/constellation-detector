@@ -58,9 +58,13 @@ class StarDetector:
         im_with_keypoints = cv2.drawKeypoints(image, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
         height, width = im_with_keypoints.shape[:2]
         cv2.imshow(name,cv2.resize(im_with_keypoints,(int(factor*width), int(factor*height)), interpolation = cv2.INTER_CUBIC))
+        print(keypoints)
     @staticmethod
     def getKeypoints(name):
         im = 255 - cv2.imread(name, cv2.IMREAD_GRAYSCALE)
+        #lower = np.array([0,0,0])
+        #upper = np.array([64,64,64])
+        im = cv2.inRange(im,0,64)
         keypoints = StarDetector.blobSieve(StarDetector.getStarBlobs(im))
         StarDetector.displayBlobs(im,keypoints,1,name)
 # Read image
