@@ -62,9 +62,9 @@ class StarDetector:
     @staticmethod
     def getKeypoints(name):
         im = 255 - cv2.imread(name, cv2.IMREAD_GRAYSCALE)
-        #lower = np.array([0,0,0])
-        #upper = np.array([64,64,64])
-        im = cv2.inRange(im,0,64)
+        cv2.imshow("test "+name,im)
+        msk = cv2.inRange(im,0,196)
+        im = 255 - cv2.bitwise_and(255-im,255-im,mask=msk)
         keypoints = StarDetector.blobSieve(StarDetector.getStarBlobs(im))
         StarDetector.displayBlobs(im,keypoints,1,name)
 # Read image
