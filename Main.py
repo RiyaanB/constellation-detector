@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 import math
 import time
-
+from Points import Points
+from threading import Thread
 class StarMap:
     def __init__(self,name,display=True):
         self.name = name
@@ -58,15 +59,23 @@ class StarMap:
                     new.append(keypoint)
             self.sievedKeypoints = new
         self.sievedKeypoints = self.keypoints
-        print(len(self.sievedKeypoints))
+        self.points = []
+        for point in self.sievedKeypoints:
+            self.points.append((point.pt[0],point.pt[1]))
     def display(self):
         self.withKeypoints = cv2.drawKeypoints(self.rawInverse, self.sievedKeypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
         height, width = self.withKeypoints.shape[:2]
         factor = 1
         cv2.imshow(self.name,cv2.resize(self.withKeypoints,(int(factor*width), int(factor*height)), interpolation = cv2.INTER_CUBIC))
-
-StarMap('orion.jpg')
-StarMap('big_dipper.jpg')
-StarMap('leo.jpg')
-while True:
-    cv2.waitKey(1)
+class Displayer(Thread):
+    def run(self):
+        while True:
+            cv2.waitKey(0)
+#Displayer().start()
+s  = StarMap('orion.jpg',False)
+stars = Points(s.points)
+#StarMap('big_dipper.jpg')
+#StarMap('leo.jpg')
+cv2.waitKey(0)
+#while True:
+#    cv2.waitKey(0)
