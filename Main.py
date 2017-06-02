@@ -72,10 +72,13 @@ class Displayer(Thread):
         while True:
             cv2.waitKey(0)
 #Displayer().start()
-s  = StarMap('orion.jpg',False)
+s  = StarMap('orion.jpg',True)
 stars = Points(s.points)
+stars.boxify()
+print(stars.pointSort)
 #StarMap('big_dipper.jpg')
 #StarMap('leo.jpg')
-cv2.waitKey(0)
-#while True:
-#    cv2.waitKey(0)
+#cv2.waitKey(0)
+while True:
+    cv2.waitKey(0)
+#478.84130983030275

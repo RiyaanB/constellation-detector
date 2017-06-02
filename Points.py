@@ -22,8 +22,8 @@ class Points:
 
     def maxDistance(self):
         maxD = -1
-        for a in self.pointList:
-            for b in self.pointList:
+        for a in self.pointSort:
+            for b in self.pointSort:
                 maxD = max(Points.distance(a,b),maxD)
         self.fat = maxD
 
@@ -52,3 +52,5 @@ class Points:
         minY = min(self.pointSort, key = lambda p: p[1])[1]
         maxY = max(self.pointSort, key = lambda p: p[1])[1]
         return maxY - minY
+    def __str__(self):
+        return self.pointSort
