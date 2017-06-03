@@ -4,9 +4,9 @@ import string
 import numpy as np
 import cv2
 import time
+import copy
 
 
-orion = Points([(203.99999999999997, 79.73193560922681), (201.99888306503846, 508.97151815848036), (135.96202421130712, 265.8358105606514), (112.94917945924924, 161.77772994265058), (111.94862099176846, 173.7844315524199), (108.94694558932612, 194.7961593695162), (104.94471171940303, 281.84474604034386), (74.92795769497971, 300.8553569224786), (64.92237302017196, 560.0), (8.891098841248407, 466.9480625242877), (-16.122862845771067, 83.73416947914993)])
 class Points:
 
     @staticmethod
@@ -90,7 +90,7 @@ class Points:
         t = time.clock()
         #1 2 3 4 5 6 8 9 10 12 15
         step = 3
-        c = 360//step
+        c = 360000000000000000000000000000000000//step
         for a in range(c):
             blank_image = np.zeros((1000,1000,3),np.uint8)
             self.rotateEntire(step)
@@ -107,15 +107,42 @@ class Points:
         for point in range(len(self.pointSort)):
             self.pointSort[point] = self.pointSort[point][0] * self.k,self.pointSort[point][1] * self.k
         self.boxify()
-    def rotateEntire(self,d):
+    def rotateEntire(self,d,O):
         mean = self.mean()
         for point in range(len(self.pointSort)):
-            self.pointSort[point] = Points.rotate((mean[0],mean[1]),self.pointSort[point],d)
-            
-def comparePoints(A,B):
+            self.pointSort[point] = Points.rotate(O,self.pointSort[point],d)
+    def translate(self,point):
+       for p in range(len(self.pointSort)):
+           self.pointSort[p] = (self.pointSort[p][0] - point[0]), (self.pointSort[p][1] - point[1])
+    @staticmethod
+    def minDistanceBetweenPoints(points,point):
+        minP = 500000
+        for p in points:
+            minP = min(Points.distance(p,point),minP)
+        return minP
+def cp(A,B):
     A.scalify()
     B.scalify()
 
     #A is preloaded
     for point in A.pointSort:
-        
+        minAveragePoint = 200000000
+        for p in B.pointSort:
+            backup = copy.deepcopy(B.pointSort)
+            B.translate(point)
+            current = 0
+            minAverage = 200000000
+            while(current < 360):
+                step = 0.5
+                B.rotateEntire(step,point)
+                current += step
+                s = 0
+                for o in B.pointSort:
+                    s += Points.minDistanceBetweenPoints(A.pointSort,o)
+                minAverage = min(s/len(backup),minAverage)
+                if int(minAverage) in range(-6,6):
+                    return minAverage
+            B.pointSort = backup
+        minAveragePoint = min(minAverage,minAveragePoint)
+    return minAveragePoint
+

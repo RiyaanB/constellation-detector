@@ -68,7 +68,11 @@ class StarMap:
         factor = 1
         cv2.imshow(self.name,cv2.resize(self.withKeypoints,(int(factor*width), int(factor*height)), interpolation = cv2.INTER_CUBIC))
 
-s  = StarMap('orion.jpg',False)
-stars = Points(s.points)
-print(stars.pointSort)
-stars.display()
+s1 = StarMap('big_dipper.jpg',False)
+s2 = StarMap('big_dipper.jpg',False)
+h1 = Points(s1.points)
+h2 = Points(s2.points)
+print(h1.pointSort)
+print(h2.pointSort)
+
+
