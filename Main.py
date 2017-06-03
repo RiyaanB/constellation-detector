@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 import time
-from Points import Points
+from Points import *
 from threading import Thread
 class StarMap:
     def __init__(self,name,display=True):
@@ -67,18 +67,8 @@ class StarMap:
         height, width = self.withKeypoints.shape[:2]
         factor = 1
         cv2.imshow(self.name,cv2.resize(self.withKeypoints,(int(factor*width), int(factor*height)), interpolation = cv2.INTER_CUBIC))
-class Displayer(Thread):
-    def run(self):
-        while True:
-            cv2.waitKey(0)
-#Displayer().start()
-s  = StarMap('orion.jpg',True)
+
+s  = StarMap('orion.jpg',False)
 stars = Points(s.points)
-stars.boxify()
 print(stars.pointSort)
-#StarMap('big_dipper.jpg')
-#StarMap('leo.jpg')
-#cv2.waitKey(0)
-while True:
-    cv2.waitKey(0)
-#478.84130983030275
+stars.display()
